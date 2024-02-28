@@ -1,0 +1,36 @@
+// 定义内容
+export default {
+	login: {
+		placeholder1: '账户',
+		placeholder2: '密码',
+		placeholder3: '请输入验证码',
+		btnText: '登 录',
+		btnTextRegister: '注 册',
+		pleaseFillin1: '请填写账户和密码！',
+		pleaseFillin2: '请填写账户！',
+		pleaseFillin3: '请填写密码！',
+		registerPlaceholder1: '邀请码',
+		registerPlaceholder2: '真实姓名',
+		registerPlaceholder3: '手机号',
+		registerPlaceholder4: '邮箱',
+		registerPlaceholder5: '确认密码',
+		registerPleaseFillin1: '请填写邀请码！',
+		registerPleaseFillin2: '请填写真实姓名！',
+		registerPleaseFillin3: '请填写手机号！',
+		registerPleaseFillin4: '请填写邮箱！',
+		registerPleaseFillin5: '请填写密码！',
+		registerPleaseFillin6: '请填写确认密码！',
+		registerNotConfirm: '密码与确认密码不一致！',
+		registerFillInCorrectEmail: '请输入正确的邮箱格式！',
+		btnTextReturnToLogin: '返 回 登 录',
+		link: {
+			one1: '第三方登录',
+			one2: '友情链接',
+		},
+		signInText: '欢迎回来！',
+		copyright: {
+			one5: '版权所有：深圳市xxx软件科技有限公司',
+			two6: 'Copyright: Shenzhen XXX Software Technology 粤ICP备05010000号',
+		},
+	},
+};

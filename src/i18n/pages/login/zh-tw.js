@@ -1,0 +1,36 @@
+// 定义内容
+export default {
+	login: {
+		placeholder1: '賬戶',
+		placeholder2: '密碼',
+		placeholder3: '請輸入驗證碼',
+		btnText: '登 錄',
+		btnTextRegister: '註 冊',
+		pleaseFillin1: '請填寫賬戶與密碼！',
+		pleaseFillin2: '請填寫賬戶！',
+		pleaseFillin3: '請填寫密碼！',
+		registerPlaceholder1: '邀請碼',
+		registerPlaceholder2: '真實姓名',
+		registerPlaceholder3: '手機號',
+		registerPlaceholder4: '郵箱',
+		registerPlaceholder5: '確認密碼',
+		registerPleaseFillin1: '請填寫邀請碼！',
+		registerPleaseFillin2: '請填寫真實姓名！',
+		registerPleaseFillin3: '請填寫手機號！',
+		registerPleaseFillin4: '請填寫郵箱！',
+		registerPleaseFillin5: '請填寫密碼！',
+		registerPleaseFillin6: '請填寫確認密碼！',
+		registerNotConfirm: '密碼與確認密碼不一致！',
+		registerFillInCorrectEmail: '請輸入正確的郵箱格式！',
+		btnTextReturnToLogin: '返 回 登 錄',
+		link: {
+			one1: '協力廠商登入',
+			one2: '友情連結',
+		},
+		signInText: '歡迎回來！',
+		copyright: {
+			one5: '版權所有：深圳市xxx軟件科技有限公司',
+			two6: 'Copyright: Shenzhen XXX Software Technology 粵ICP備05010000號',
+		},
+	},
+};
