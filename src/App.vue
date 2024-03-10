@@ -1,5 +1,6 @@
 <template>
 	<div id="app">
+		<!-- <ModelShow></ModelShow> -->
 		<router-view />
 		<Setings ref="setingsRef" />
 		<!-- <Upgrade v-if="getVersion" />
@@ -8,6 +9,7 @@
 </template>
 
 <script>
+import ModelShow from './views/ModelShow/ModelShow.vue';
 import config from '/package.json';
 import setIntroduction from '@/utils/setIconfont.js';
 import { Local } from '@/utils/storage.js';

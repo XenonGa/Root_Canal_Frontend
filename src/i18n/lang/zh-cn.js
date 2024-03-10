@@ -49,6 +49,7 @@ export default {
 		personal: '个人中心',
 		tools: '工具类集合',
 		inviteCodeView: '生成邀请码',
+		modelShow: '患者详情页',
 		layoutIfameView: '内嵌 iframe',
 		addAdmin: '医师列表',
 		patient: '患者列表',

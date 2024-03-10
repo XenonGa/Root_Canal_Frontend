@@ -27,7 +27,7 @@
 					label="操作"
 					width="160">
 					<template slot-scope="scope">
-						<el-button @click="setAsAdmin(scope.row)" type="danger" size="small">删除患者</el-button>
+						<el-button @click="deletePatient(scope.row, scope.$index)" type="danger" size="small">删除患者</el-button>
 					</template>
 					</el-table-column>
 				</el-table>
@@ -74,7 +74,7 @@ export default {
 		};
 	},
 	created() {
-		this.getDoctorInfo()
+		this.getPatientInfo()
 	},
 	computed: {
 		// 设置主盒子高度
@@ -89,7 +89,7 @@ export default {
 	},
 	
 	methods: {
-		getDoctorInfo() {
+		getPatientInfo() {
 			let data = this.$store.state.userInfos.userInfos;
 			// console.log(data)
 			let instance = axios.create({
@@ -149,6 +149,23 @@ export default {
 				this.form.name = ''
 				this.form.description = ''
 				this.dialogFormVisible = false
+			});
+		},
+		deletePatient(row, index) {
+			let instance = axios.create({
+				baseURL: "http://127.0.0.1:8000",
+				timeout: 1000,
+			})
+			instance.post("/api/user/delete_patient",{
+				patient_id: row.id
+			}).then(async res=>{
+				console.log(res)
+				this.$message({
+					showClose: true,
+					message: res.data.msg,
+					type: 'success'
+				});
+				this.tableData.splice(index, 1);
 			});
 		},
 		setAsAdmin(row) {
