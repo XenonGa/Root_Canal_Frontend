@@ -6,7 +6,7 @@
 				<el-card shadow="hover">
 					<div slot="header" class="patient-header">
 						<div style="margin-top: 10px;">{{ $t('message.router.patient') }}</div>
-						<el-button type="primary" round>新增患者</el-button>
+						<el-button type="primary" round @click="dialogFormVisible = true">新增患者</el-button>
 					</div>
 					<el-table
 					:data="tableData"
@@ -18,40 +18,42 @@
 					width="120">
 					</el-table-column>
 					<el-table-column
-					prop="phone"
-					label="手机号"
+					prop="description"
+					label="描述"
 					width="300">
-					</el-table-column>
-					<el-table-column
-					prop="mail"
-					label="邮箱"
-					width="300">
-					</el-table-column>
-					<el-table-column
-					prop="isAdmin"
-					label="身份"
-					width="100"
-					:filters="[{ text: '普通医师', value: '普通医师' }, { text: '管理医师', value: '管理医师' }]"
-					:filter-method="filterTag"
-					filter-placement="bottom-end">
-					<template slot-scope="scope">
-						<el-tag
-						:type="scope.row.isAdmin === '管理医师' ? 'primary' : 'success'"
-						disable-transitions>{{scope.row.isAdmin}}</el-tag>
-					</template>
 					</el-table-column>
 					<el-table-column
 					fixed="right"
 					label="操作"
 					width="160">
 					<template slot-scope="scope">
-						<el-button @click="setAsAdmin(scope.row)" type="text" size="small" v-if="scope.row.isAdmin === '普通医师'">设置为管理医师</el-button>
-						<el-button @click="setAsAdmin(scope.row)" type="text" size="small" v-else disabled>设置为管理医师</el-button>
+						<el-button @click="setAsAdmin(scope.row)" type="danger" size="small">删除患者</el-button>
 					</template>
 					</el-table-column>
 				</el-table>
 				</el-card>
-	</div>
+				
+				<el-dialog title="添加患者" :visible.sync="dialogFormVisible">
+					<el-form :model="form">
+						<el-form-item label="患者姓名">
+							<el-input v-model="form.name" autocomplete="off"></el-input>
+						</el-form-item>
+						<el-form-item label="诊断描述">
+							<el-input
+							type="textarea"
+							:rows="3"
+							placeholder="请输入描述"
+							v-model="form.description">
+							</el-input>
+						</el-form-item>
+					</el-form>
+					<div slot="footer" class="dialog-footer">
+						<el-button @click="dialogFormVisible = false">取 消</el-button>
+						<el-button type="primary" @click="createPatient">确 定</el-button>
+					</div>
+				</el-dialog>
+			</div>
+	
 </template>
 
 <script>
@@ -63,7 +65,12 @@ export default {
 			expireTime: 1,
 			inviteCode: '',
 			isGenerated: false,
-			tableData: []
+			tableData: [],
+			dialogFormVisible: false,
+			form: {
+				name: '',
+				description: '',
+			}
 		};
 	},
 	created() {
@@ -76,32 +83,72 @@ export default {
 			if (isTagsview) return `114px`;
 			else return `80px`;
 		},
+		getUserInfos() {
+			return this.$store.state.userInfos.userInfos;
+		},
 	},
 	
 	methods: {
 		getDoctorInfo() {
+			let data = this.$store.state.userInfos.userInfos;
+			// console.log(data)
 			let instance = axios.create({
 				baseURL: "http://127.0.0.1:8000",
 				timeout: 1000,
 			})
-			instance.post("/api/user/get_all_doctors").then(async res=>{
+			instance.post("/api/user/get_patient_of_doctor", {
+				doctor_id: data.id
+			}).then(async res=>{
 				console.log(res)
-				for(var i = 0; i < res.data.doctors_info.length; i++) {
-					var tag = ''
-					if(res.data.doctors_info[i].doctor_is_admin) {
-						tag = '管理医师'
-					}
-					else {
-						tag = '普通医师'
-					}
+				for(var i = 0; i < res.data.patients_info.length; i++) {
 					this.tableData.push({
-						id: res.data.doctors_info[i].doctor_id,
-						name: res.data.doctors_info[i].doctor_name,
-						phone: res.data.doctors_info[i].doctor_phone,
-						mail: res.data.doctors_info[i].doctor_mail,
-						isAdmin: tag
+						id: res.data.patients_info[i].patient_id,
+						name: res.data.patients_info[i].patient_name,
+						description: res.data.patients_info[i].description,
 					})
 				}
+			});
+			console.log(this.tableData)
+		},
+		createPatient() {
+			if(this.form.name === '') {
+				this.$message({
+					showClose: true,
+					message: `请填写患者姓名！`,
+					type: 'error'
+				});
+				return
+			}
+			else if(this.form.description === '') {
+				this.$message({
+					showClose: true,
+					message: `请填写诊断描述！`,
+					type: 'error'
+ 				});
+				return
+			}
+			let instance = axios.create({
+				baseURL: "http://127.0.0.1:8000",
+				timeout: 1000,
+			})
+			instance.post("/api/user/create_patient", {
+				doctor_id: this.$store.state.userInfos.userInfos.id,
+				patient_name: this.form.name,
+				patient_description: this.form.description
+			}).then(async res=>{
+				console.log(res)
+				this.$message({
+					showClose: true,
+					message: res.data.msg,
+					type: 'success'
+				});
+				this.tableData.push({
+					name: this.form.name,
+					description: this.form.description
+				})
+				this.form.name = ''
+				this.form.description = ''
+				this.dialogFormVisible = false
 			});
 		},
 		setAsAdmin(row) {

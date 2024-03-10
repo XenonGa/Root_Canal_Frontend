@@ -276,7 +276,7 @@ export default {
 					}
 					const userInfos = {
 						userName: res.data.doctor_info.doctor_name,
-						id: res.data.doctor_id,
+						id: res.data.doctor_info.doctor_id,
 						// userName: 'admin',
 						photo:
 							res.data.doctor_info.doctor_is_admin === true
