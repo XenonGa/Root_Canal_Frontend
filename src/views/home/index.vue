@@ -45,24 +45,6 @@
 					</div>
 				</el-card>
 			</el-col>
-			<el-col :md="24" :lg="8" :xl="8" class="mb15">
-				<el-card shadow="hover">
-					<div slot="header">
-						<span>{{ $t('message.card.title2') }}</span>
-						<el-button class="home-card-more" type="text" @click="onOpenGitee">{{ $t('message.card.title3') }}</el-button>
-					</div>
-					<div class="info">
-						<Scroll :data="newsInfoList" class="info-scroll" :class-option="optionSingleHeight">
-							<ul class="info-ul">
-								<li v-for="(v, k) in newsInfoList" :key="k" class="info-item" @click="onNewsInfoListClick(v)">
-									<div class="info-item-left" v-text="v.title"></div>
-									<div class="info-item-right" v-text="v.date"></div>
-								</li>
-							</ul>
-						</Scroll>
-					</div>
-				</el-card>
-			</el-col>
 		</el-row>
 
 		<!-- 推荐 -->
