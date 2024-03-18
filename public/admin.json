@@ -68,7 +68,7 @@
 			"meta": {
 				"title": "message.router.modelShow",
 				"isLink": "",
-				"isHide": false,
+				"isHide": true,
 				"isKeepAlive": true,
 				"isAffix": false,
 				"isIframe": false,

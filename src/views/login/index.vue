@@ -280,8 +280,8 @@ export default {
 						// userName: 'admin',
 						photo:
 							res.data.doctor_info.doctor_is_admin === true
-								? 'https://img0.baidu.com/it/u=1833472230,3849481738&fm=253&fmt=auto?w=200&h=200'
-								: 'https://img2.baidu.com/it/u=2187913762,2708298335&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200',
+								? 'https://img0.baidu.com/it/u=2703260886,773670012&fm=253&fmt=auto&app=138&f=JPEG?w=294&h=294'
+								: 'https://img0.baidu.com/it/u=2703260886,773670012&fm=253&fmt=auto&app=138&f=JPEG?w=294&h=294',
 						time: new Date().getTime(),
 						isAdmin: res.data.doctor_info.doctor_is_admin,
 						roles: defaultRoles,

@@ -15,7 +15,7 @@ const themeConfigModule = {
 			// 默认 primary 主题颜色
 			primary: '#409eff',
 			// 是否开启深色模式
-			isIsDark: false,
+			isIsDark: true,
 
 			/**
 			 * 菜单 / 顶栏

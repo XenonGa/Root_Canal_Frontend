@@ -8,8 +8,12 @@
 				<div style="margin-top: 10px;">{{ $t('message.router.patient') }}</div>
 				<el-button type="primary" round @click="dialogFormVisible = true">新增患者</el-button>
 			</div>
-			<el-table :data="tableData" style="width: 100%" max-height="1000">
-				<el-table-column prop="name" label="姓名" width="120">
+			<el-table class="my-table" :data="tableData" style="width: 100%" max-height="1000">
+				<el-table-column prop="name" label="姓名" width="150">
+				</el-table-column>
+				<el-table-column prop="age" label="患者年龄" width="150">
+				</el-table-column>
+				<el-table-column prop="phone" label="患者电话" width="300">
 				</el-table-column>
 				<el-table-column prop="description" label="描述" width="300">
 				</el-table-column>
@@ -34,6 +38,12 @@
 			<el-form :model="form">
 				<el-form-item label="患者姓名">
 					<el-input v-model="form.name" autocomplete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="患者年龄">
+					<el-input v-model="form.age" autocomplete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="患者电话">
+					<el-input v-model="form.phone" autocomplete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="诊断描述">
 					<el-input type="textarea" :rows="3" placeholder="请输入描述" v-model="form.description">
@@ -65,6 +75,8 @@ export default {
 			form: {
 				name: '',
 				description: '',
+				age: '',
+				phone: '',
 			},
 			row: {},
 		};
@@ -90,7 +102,7 @@ export default {
 			// console.log(data)
 			let instance = axios.create({
 				baseURL: "http://127.0.0.1:8000",
-				timeout: 1000,
+				timeout: 10000,
 			})
 			instance.post("/api/user/get_patient_of_doctor", {
 				doctor_id: data.id
@@ -108,6 +120,8 @@ export default {
 						id: res.data.patients_info[i].patient_id,
 						name: res.data.patients_info[i].patient_name,
 						description: res.data.patients_info[i].description,
+						age: res.data.patients_info[i].patient_age,
+						phone: res.data.patients_info[i].patient_phone,
 						// isUploaded: res.data.patients_info[i].is_upload
 						isUploaded: isUploaded
 					})
@@ -124,6 +138,22 @@ export default {
 				});
 				return
 			}
+			else if (this.form.age === '') {
+				this.$message({
+					showClose: true,
+					message: `请填写患者年龄！`,
+					type: 'error'
+				});
+				return
+			}
+			else if (this.form.phone === '') {
+				this.$message({
+					showClose: true,
+					message: `请填写患者电话！`,
+					type: 'error'
+				});
+				return
+			}
 			else if (this.form.description === '') {
 				this.$message({
 					showClose: true,
@@ -134,11 +164,13 @@ export default {
 			}
 			let instance = axios.create({
 				baseURL: "http://127.0.0.1:8000",
-				timeout: 1000,
+				timeout: 10000,
 			})
 			instance.post("/api/user/create_patient", {
 				doctor_id: this.$store.state.userInfos.userInfos.id,
 				patient_name: this.form.name,
+				patient_age: this.form.age,
+				patient_phone: this.form.phone,
 				patient_description: this.form.description
 			}).then(async res => {
 				console.log(res)
@@ -154,12 +186,13 @@ export default {
 				this.form.name = ''
 				this.form.description = ''
 				this.dialogFormVisible = false
+				location.reload()
 			});
 		},
 		deletePatient(row, index) {
 			let instance = axios.create({
 				baseURL: "http://127.0.0.1:8000",
-				timeout: 1000,
+				timeout: 10000,
 			})
 			instance.post("/api/user/delete_patient", {
 				patient_id: row.id
@@ -243,9 +276,11 @@ export default {
 					type: 'success'
 				});
 			});
+			location.reload()
 		},
 		jumpToDetail(row) {
-			 
+			localStorage.setItem('patientID', row.id);
+			this.$router.push('/patientDetail');
 		}
 	}
 };
@@ -272,5 +307,59 @@ export default {
 .patient-header {
 	display: flex;
 	justify-content: space-between;
+}
+
+
+.my-table ::v-deep td.el-table__cell {
+    border: none;
+	min-height: 200px;
+}
+//表头背景颜色
+::v-deep .el-table th {
+	background-color: rgba(1, 0, 75, 0.867);
+	height: 30px;
+}
+
+//表头字体颜色
+::v-deep.el-table thead {
+	color: #ffffff;
+}
+
+//空表格背景颜色
+::v-deep .el-table__empty-block {
+	background: #191919;
+}
+
+//空表格字体颜色
+::v-deep .el-table__empty-text {
+	color: #ccc;
+}
+
+//修改行内线
+::v-deep .el-table td,
+.building-top .el-table th.is-leaf {
+	border-bottom: 1px solid #7856ff !important;
+}
+
+//修改鼠标选中行
+::v-deep .el-table__body tr.hover-row>td {
+	background: rgba(2, 0, 122, 0.867);
+}
+
+//修改普通行
+// ::v-deep .el-table tr {
+// 	background: rgba(1, 0, 75, 0.867);
+// 	height: 20px;
+// }
+
+::v-deep .el-table--enable-row-transition .el-table__body td,
+.el-table .cell {
+	background-color: rgba(1, 0, 75, 0.867);
+}
+
+
+//水平和垂直滚动条
+::v-deep .el-table--scrollable-x .el-table__body-wrapper {
+	overflow-x: hidden;
 }
 </style>
