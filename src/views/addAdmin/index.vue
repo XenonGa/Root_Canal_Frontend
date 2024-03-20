@@ -21,15 +21,15 @@
 					:filters="[{ text: '普通医师', value: '普通医师' }, { text: '管理医师', value: '管理医师' }]"
 					:filter-method="filterTag" filter-placement="bottom-end">
 					<template slot-scope="scope">
-						<el-tag :type="scope.row.isAdmin === '管理医师' ? 'primary' : 'success'" disable-transitions>{{
+						<el-tag effect="plain" :type="scope.row.isAdmin === '管理医师' ? 'warning' : 'success'" disable-transitions>{{
 					scope.row.isAdmin }}</el-tag>
 					</template>
 				</el-table-column>
 				<el-table-column fixed="right" label="操作" width="300">
 					<template slot-scope="scope">
-						<el-button @click="setAsAdmin(scope.row)" type="text" size="small"
+						<el-button @click="setAsAdmin(scope.row)" size="small"
 							v-if="scope.row.isAdmin === '普通医师'">设置为管理医师</el-button>
-						<el-button @click="setAsAdmin(scope.row)" type="text" size="small" v-else
+						<el-button @click="setAsAdmin(scope.row)" size="small" v-else
 							disabled>设置为管理医师</el-button>
 					</template>
 				</el-table-column>
