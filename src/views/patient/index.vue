@@ -13,14 +13,17 @@
 				</el-table-column>
 				<el-table-column prop="age" label="患者年龄" width="150">
 				</el-table-column>
-				<el-table-column prop="phone" label="患者电话" width="300">
+				<el-table-column prop="phone" label="患者电话" width="200">
+				</el-table-column>
+				<el-table-column prop="date" label="就诊时间" width="200">
 				</el-table-column>
 				<el-table-column prop="description" label="描述" width="300">
 				</el-table-column>
 				<el-table-column prop="isUploaded" label="是否已上传" width="120">
 				</el-table-column>
-				<el-table-column fixed="right" label="操作" width="300">
+				<el-table-column fixed="right" label="操作" width="400">
 					<template slot-scope="scope">
+						<el-button @click="openPatientDetail(scope.row)" type="info" size="small">患者详情</el-button>
 						<el-button @click="openFileInput(scope.row)" type="primary" size="small">上传影像</el-button>
 
 						<el-button @click="jumpToDetail(scope.row)" type="success" size="small"
@@ -33,7 +36,74 @@
 				</el-table-column>
 			</el-table>
 		</el-card>
-
+		<el-dialog title="患者详情" :visible.sync="patientDetailVisible">
+			<el-descriptions direction="vertical" :column="4" border>
+				<el-descriptions-item label="患者姓名" label-class-name="my-label" content-class-name="my-content">{{
+					patientDetail.name }}</el-descriptions-item>
+				<el-descriptions-item label="就诊号" label-class-name="my-label" content-class-name="my-content">{{
+					patientDetail.id }}</el-descriptions-item>
+				<el-descriptions-item label="就诊科室" label-class-name="my-label" content-class-name="my-content">{{
+					patientDetail.classification }}</el-descriptions-item>
+				<el-descriptions-item label="手机号" label-class-name="my-label" content-class-name="my-content">{{
+					patientDetail.phone }}</el-descriptions-item>
+				<el-descriptions-item label="录入时间" label-class-name="my-label" content-class-name="my-content">{{
+					patientDetail.date }}</el-descriptions-item>
+				<el-descriptions-item label="诊断时间" label-class-name="my-label" content-class-name="my-content">{{
+					patientDetail.diagnoseTime }}</el-descriptions-item>
+				<el-descriptions-item label="描述" :span="2" label-class-name="my-label"
+					content-class-name="my-content">{{
+						patientDetail.description }}</el-descriptions-item>
+				<el-descriptions-item label="诊断意见" :span="2" label-class-name="my-label"
+					content-class-name="my-content-double">{{ patientDetail.diagnosticOpinion
+					}}</el-descriptions-item>
+				<el-descriptions-item label="处理意见" :span="2" label-class-name="my-label"
+					content-class-name="my-content-double">{{ patientDetail.handlingOpinion }}</el-descriptions-item>
+				<el-descriptions-item label="备注" :span="2" label-class-name="my-label"
+					content-class-name="my-content-double">{{
+						patientDetail.note }}</el-descriptions-item>
+			</el-descriptions>
+			<el-dialog width="30%" title="编辑诊断意见" :visible.sync="editDiagnosticOpinionVisible" append-to-body>
+				<el-form :model="patientDetail">
+					<el-form-item label="诊断意见">
+						<el-input type="textarea" :rows="3" placeholder="请输入诊断意见" v-model="diagnosticOpinion">
+						</el-input>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button @click="editDiagnosticOpinionVisible = false">取 消</el-button>
+					<el-button type="primary" @click="editDiagnosticOpinion">确 定</el-button>
+				</div>
+			</el-dialog>
+			<el-dialog width="30%" title="编辑处理意见" :visible.sync="editHandlingOpinionVisible" append-to-body>
+				<el-form :model="patientDetail">
+					<el-form-item label="处理意见">
+						<el-input type="textarea" :rows="3" placeholder="请输入处理意见" v-model="handlingOpinion">
+						</el-input>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button @click="editHandlingOpinionVisible = false">取 消</el-button>
+					<el-button type="primary" @click="editHandlingOpinion">确 定</el-button>
+				</div>
+			</el-dialog>
+			<el-dialog width="30%" title="编辑备注" :visible.sync="editNoteVisible" append-to-body>
+				<el-form :model="patientDetail">
+					<el-form-item label="备注">
+						<el-input type="textarea" :rows="3" placeholder="请输入备注" v-model="diagnosticOpinion">
+						</el-input>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button @click="editNoteVisible = false">取 消</el-button>
+					<el-button type="primary" @click="editNote">确 定</el-button>
+				</div>
+			</el-dialog>
+			<div slot="footer" class="dialog-footer">
+				<el-button type="success" @click="editDiagnosticOpinionVisible = true">编辑诊断意见</el-button>
+				<el-button type="primary" @click="editHandlingOpinionVisible = true">编辑处理意见</el-button>
+				<el-button type="warning" @click="editNoteVisible = true">编辑备注</el-button>
+			</div>
+		</el-dialog>
 		<el-dialog title="添加患者" :visible.sync="dialogFormVisible">
 			<el-form :model="form">
 				<el-form-item label="患者姓名">
@@ -63,7 +133,7 @@
 <script>
 import axios from "axios"
 export default {
-	name: 'addAdmin',
+	name: 'patient',
 	data() {
 		return {
 			expireTime: 1,
@@ -71,6 +141,7 @@ export default {
 			isGenerated: false,
 			tableData: [],
 			dialogFormVisible: false,
+			patientDetailVisible: false,
 			photos: [],
 			form: {
 				name: '',
@@ -79,6 +150,25 @@ export default {
 				phone: '',
 			},
 			row: {},
+			patientDetail: {
+				id: '',
+				name: '',
+				description: '',
+				age: '',
+				phone: '',
+				date: '',
+				classification: '',
+				diagnoseTime: '',
+				diagnosticOpinion: '',
+				handlingOpinion: '',
+				note: ''
+			},
+			editDiagnosticOpinionVisible: false,
+			editHandlingOpinionVisible: false,
+			editNoteVisible: false,
+			diagnosticOpinion: '',
+			handlingOpinion: '',
+			note: '',
 		};
 	},
 	created() {
@@ -116,12 +206,24 @@ export default {
 					else {
 						isUploaded = '否'
 					}
+					// const dateString = '2024-03-18T07:25:14.194Z';
+					const date = new Date(res.data.patients_info[i].register_time);
+					// const date = new Date(dateString);
+					const year = date.getFullYear();
+					const month = String(date.getMonth() + 1).padStart(2, '0'); // 使用padStart方法补零
+					const day = String(date.getDate()).padStart(2, '0');
+					const hour = String(date.getHours()).padStart(2, '0');
+					const minute = String(date.getMinutes()).padStart(2, '0');
+
+					const formattedDate = `${year}-${month}-${day} ${hour}:${minute}`;
+					// console.log(formattedDate); 
 					this.tableData.push({
 						id: res.data.patients_info[i].patient_id,
 						name: res.data.patients_info[i].patient_name,
 						description: res.data.patients_info[i].description,
 						age: res.data.patients_info[i].patient_age,
 						phone: res.data.patients_info[i].patient_phone,
+						date: formattedDate,
 						// isUploaded: res.data.patients_info[i].is_upload
 						isUploaded: isUploaded
 					})
@@ -238,7 +340,7 @@ export default {
 			for (const [key, value] of formData.entries()) {
 				console.log(key, value);
 			}
-			 // 在文件读取完成后执行上传操作
+			// 在文件读取完成后执行上传操作
 			formData.append('patient_id', this.row.id); // 患者ID字段
 			formData.append('position', 'tooth'); // 位置字段
 			for (const [key, value] of formData.entries()) {
@@ -246,7 +348,7 @@ export default {
 			}
 			let instance = axios.create({
 				baseURL: "http://127.0.0.1:8000",
-				timeout: 1000,
+				timeout: 10000,
 			});
 			instance.post("/api/user/upload_slices", formData).then(async res => {
 				console.log(res)
@@ -256,32 +358,135 @@ export default {
 					type: 'success'
 				});
 			});
-		},
-		uploadSlices(formdata) {
-			// 将其他字段添加到FormData对象中
-			formData.append('patient_id', this.row.id); // 患者ID字段
-			formData.append('position', 'tooth'); // 位置字段
-			for (const [key, value] of formData.entries()) {
-				console.log(key, value);
-			}
-			let instance = axios.create({
-				baseURL: "http://127.0.0.1:8000",
-				timeout: 1000,
-			});
-			instance.post("/api/user/upload_slices", formData).then(async res => {
-				console.log(res)
-				this.$message({
+			let _this = this;
+			setTimeout(function () {
+				console.log(111);
+				_this.$message({
 					showClose: true,
-					message: res.data.msg,
+					message: '模型已成功创建',
 					type: 'success'
 				});
-			});
-			location.reload()
+			}, 5000);
 		},
+		// uploadSlices(formdata) {
+		// 	// 将其他字段添加到FormData对象中
+		// 	formData.append('patient_id', this.row.id); // 患者ID字段
+		// 	formData.append('position', 'tooth'); // 位置字段
+		// 	for (const [key, value] of formData.entries()) {
+		// 		console.log(key, value);
+		// 	}
+		// 	let instance = axios.create({
+		// 		baseURL: "http://127.0.0.1:8000",
+		// 		timeout: 10000,
+		// 	});
+		// 	instance.post("/api/user/upload_slices", formData).then(async res => {
+		// 		console.log(res)
+		// 		this.$message({
+		// 			showClose: true,
+		// 			message: res.data.msg,
+		// 			type: 'success'
+		// 		});
+		// 	});
+		// 	// location.reload()
+		// 	setTimeout(function () {
+		// 		console.log(111);
+		// 		this.$message({
+		// 			showClose: true,
+		// 			message: '模型已成功创建',
+		// 			type: 'success'
+		// 		});
+		// 	}, 5000);
+
+		// },
 		jumpToDetail(row) {
-			localStorage.setItem('patientID', row.id);
-			this.$router.push('/patientDetail');
-		}
+			// localStorage.setItem('patientID', row.id);
+			// this.$router.push('/patientDetail');
+			window.open('localhost:8080', '_blank');
+			// window.open('https://www.google.com', '_blank');
+		},
+		openPatientDetail(row) {
+			let instance = axios.create({
+				baseURL: "http://127.0.0.1:8000",
+				timeout: 10000,
+			})
+			instance.post("/api/user/get_total_patient_info", {
+				patient_id: row.id
+			}).then(async res => {
+				console.log(res)
+				this.patientDetail.classification = res.data.patient_info.classification;
+				this.patientDetail.diagnoseTime = res.data.patient_info.diagnose_time;
+				this.patientDetail.diagnosticOpinion = res.data.patient_info.diagnostic_opinion;
+				this.patientDetail.handlingOpinion = res.data.patient_info.handling_opinion;
+				this.patientDetail.note = res.data.patient_info.note;
+				this.diagnosticOpinion = res.data.patient_info.diagnostic_opinion;
+				this.handlingOpinion = res.data.patient_info.handling_opinion;
+				this.note = res.data.patient_info.note;
+			});
+			this.patientDetail.id = String(row.id).padStart(6, '0');
+			this.patientDetail.name = row.name;
+			this.patientDetail.description = row.description;
+			this.patientDetail.age = row.age;
+			this.patientDetail.phone = row.phone;
+			this.patientDetail.date = row.date;
+			this.patientDetailVisible = true;
+		},
+		editDiagnosticOpinion() {
+			let instance = axios.create({
+				baseURL: "http://127.0.0.1:8000",
+				timeout: 10000,
+			})
+			instance.post("/api/user/edit_diagnostic_opinion", {
+				patient_id: this.patientDetail.id,
+				diagnostic_opinion: this.diagnosticOpinion
+			}).then(async res => {
+				console.log(res)
+				this.$message({
+					showClose: true,
+					message: res.data.msg,
+					type: 'success'
+				});
+				this.patientDetail.diagnosticOpinion = this.diagnosticOpinion;
+				this.editDiagnosticOpinionVisible = false;
+			});
+		},
+		editHandlingOpinion() {
+			let instance = axios.create({
+				baseURL: "http://127.0.0.1:8000",
+				timeout: 10000,
+			})
+			instance.post("/api/user/edit_handling_opinion", {
+				patient_id: this.patientDetail.id,
+				handling_opinion: this.handlingOpinion
+			}).then(async res => {
+				console.log(res)
+				this.$message({
+					showClose: true,
+					message: res.data.msg,
+					type: 'success'
+				});
+				this.patientDetail.handlingOpinion = this.handlingOpinion;
+				this.editHandlingOpinionVisible = false;
+			});
+		},
+		editNote() {
+			let instance = axios.create({
+				baseURL: "http://127.0.0.1:8000",
+				timeout: 10000,
+			})
+			instance.post("/api/user/edit_note", {
+				patient_id: this.patientDetail.id,
+				note: this.note
+			}).then(async res => {
+				console.log(res)
+				this.$message({
+					showClose: true,
+					message: res.data.msg,
+					type: 'success'
+				});
+				this.patientDetail.note = this.note;
+				this.editNoteVisible = false;
+			});
+		},
 	}
 };
 </script>
@@ -311,9 +516,10 @@ export default {
 
 
 .my-table ::v-deep td.el-table__cell {
-    border: none;
+	border: none;
 	min-height: 200px;
 }
+
 //表头背景颜色
 ::v-deep .el-table th {
 	background-color: rgba(1, 0, 75, 0.867);
@@ -361,5 +567,42 @@ export default {
 //水平和垂直滚动条
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper {
 	overflow-x: hidden;
+}
+
+.dialog-button-container {
+	padding-top: 10px;
+	padding-right: 30px;
+	padding-left: 30px;
+	display: flex;
+	// justify-content: space-between;
+}
+
+.my-label {
+	background: #191919;
+}
+
+.my-content {
+	background: #1f1f23;
+}
+
+::v-deep .el-descriptions .is-bordered .el-descriptions-item__cell {
+	border: 1px solid #6a6a6a;
+	padding: 12px 10px;
+}
+
+::v-deep .el-descriptions-item__label.is-bordered-label {
+	font-weight: 700;
+	color: #bcc0c7;
+	background: #57535e;
+}
+
+::v-deep .el-descriptions__body {
+	color: #efeff0;
+	background-color: #28262b;
+	line-height: 2.0;
+}
+
+.my-content-double {
+	line-height: 3;
 }
 </style>

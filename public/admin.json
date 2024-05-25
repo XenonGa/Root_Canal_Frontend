@@ -75,6 +75,20 @@
 				"roles": ["admin"],
 				"icon": "iconfont icon-caozuo-wailian"
 			}
+		},{
+			"path": "/test",
+			"name": "Test",
+			"component": "test/index",
+			"meta": {
+				"title": "message.router.modelShow",
+				"isLink": "",
+				"isHide": true,
+				"isKeepAlive": true,
+				"isAffix": false,
+				"isIframe": false,
+				"roles": ["admin"],
+				"icon": "iconfont icon-caozuo-wailian"
+			}
 		}
 	]
 }

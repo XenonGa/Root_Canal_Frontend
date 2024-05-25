@@ -14,16 +14,16 @@
 						<div class="user-item-right overflow">
 							<el-row>
 								<el-col :span="24" class="right-title mb15 one-text-overflow"
-									>{{ currentTime }}，{{ getUserInfos.userName }}，{{ dailyMessage }}
+									>{{ currentTime }}，{{ getUserInfos.userName }}!
 								</el-col>
 								<el-col :span="24">
 									<el-col :xs="12" :sm="12" :md="8" class="right-l-v">
-										<div class="right-label">姓名：</div>
-										<div class="right-value">{{ getUserInfos.userName }}</div>
+										<div class="right-label" style="font-size: 15px;">姓名：</div>
+										<div class="right-value" style="font-size: 15px;">{{ getUserInfos.userName }}</div>
 									</el-col>
 									<el-col :xs="12" :sm="12" :md="16" class="right-l-v">
-										<div class="right-label">身份：</div>
-										<div class="right-value">{{ userInfo.isAdmin ? '管理医师' : '普通医师' }}</div>
+										<div class="right-label" style="font-size: 15px;">身份：</div>
+										<div class="right-value" style="font-size: 15px;">{{ userInfo.isAdmin ? '管理医师' : '普通医师' }}</div>
 									</el-col>
 								</el-col>
 								<!-- <el-col :span="24" class="mt5">
@@ -44,27 +44,36 @@
 						</div>
 					</div>
 				</el-card>
+				
 			</el-col>
+			<el-col :md="12" :lg="4" :xl="8" class="mb15">
+				<el-card shadow="hover" style="height: 288px;">
+					<clock :time="time.txt" class="clock"></clock>
+					<div class="time">{{ time.txt }}</div>
+				</el-card>
+				
+			</el-col>
+			
 		</el-row>
 
 		<!-- 推荐 -->
-		<!-- <el-card shadow="hover">
+		<el-card shadow="hover" style="width: 83%;">
 			<div slot="header">
-				<span>{{ $t('message.card.title4') }}</span>
-				<el-button class="home-card-more" type="text" @click="onOpenGitee">{{ $t('message.card.title5') }}</el-button>
+				<span>待处理事项</span>
+				<!-- <el-button class="home-card-more" type="text" @click="onOpenGitee">{{ $t('message.card.title5') }}</el-button> -->
 			</div>
-			<el-row :gutter="15" class="home-recommend-row">
-				<el-col :sm="24" :md="12" :lg="6" :xl="6" v-for="(v, k) in recommendList" :key="k">
-					<div class="home-recommend" :style="{ 'background-color': v.bg }">
-						<i :class="v.icon" :style="{ color: v.iconColor }"></i>
+			<div :gutter="15" class="home-recommend-row">
+				<div v-for="(v, k) in messageList" :key="k">
+					<div class="home-recommend" :style="{ 'background-color': v.bg }" style="width: 230px; height: 140px;">
+						<!-- <i :class="v.icon" :style="{ color: v.iconColor }"></i> -->
 						<div class="home-recommend-auto">
-							<div>{{ v.title }}</div>
-							<div class="home-recommend-msg">{{ v.msg }}</div>
+							<div style="font-size: 20px;">{{ v.title }}</div>
+							<div class="home-recommend-msg" style="font-size: 30px;">{{ v.msg }}</div>
 						</div>
 					</div>
-				</el-col>
-			</el-row>
-		</el-card> -->
+				</div>
+			</div>
+		</el-card>
 
 		<!-- charts -->
 		<!-- <el-row :gutter="15" class="mt15">
@@ -137,11 +146,33 @@ import { CountUp } from 'countup.js';
 import { Session } from '@/utils/storage';
 import { formatAxis, formatDate } from '@/utils/formatTime';
 import { recommendList, chartsRightList, newsInfoList, dailyMessage } from './mock';
+import Clock from 'vue-clock2';
 export default {
 	name: 'home',
-	components: { Scroll },
+	components: { Scroll, Clock },
 	data() {
 		return {
+			messageList: [{
+				bg: 'rgb(62 48 121)',
+				title: '昨日新增患者',
+				msg: '5',
+			},{
+				bg: 'rgb(15 11 95)',
+				title: '未生成模型患者',
+				msg: '8',
+			},{
+				bg: 'rgb(62 48 121)',
+				title: '未录入分析患者',
+				msg: '12',
+			},{
+				bg: 'rgb(15 11 95)',
+				title: '可生成病历单数',
+				msg: '6',
+			},{
+				bg: 'rgb(62 48 121)',
+				title: '已完成治疗',
+				msg: '33',
+			}],
 			recommendList,
 			chartsRightList,
 			newsInfoList,
@@ -157,11 +188,16 @@ export default {
 				homeCharThree: null,
 				dispose: [null, '', undefined],
 			},
+			time: {
+				txt: '',
+				fun: null,
+			},
 		};
 	},
 	created() {
 		this.initUserInfo();
 		this.initDailyMessage();
+		this.initTime();
 	},
 	computed: {
 		currentTime() {
@@ -190,6 +226,12 @@ export default {
 		initDailyMessage() {
 			this.dailyMessage = dailyMessage[Math.floor(Math.random() * dailyMessage.length)];
 		},
+		initTime() {
+			this.time.txt = formatDate(new Date(), 'HH:MM:SS');
+			this.time.fun = setInterval(() => {
+				this.time.txt = formatDate(new Date(), 'YYYY-mm-dd HH:MM:SS WWW QQQQ');
+			}, 1000);
+		},
 		// 初始化登录信息
 		initUserInfo() {
 			if (!Session.get('userInfo')) return false;
@@ -210,4 +252,24 @@ export default {
 
 <style scoped lang="scss">
 @import './index.scss';
+.right-label {
+	min-width: 50px;
+}
+.clock {
+	margin-top: 20px;
+	margin-left: 28px;
+}
+.time {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+	font-size: 20px;
+}
+.home-recommend-msg {
+	font-size: 20px;
+}
+.home-recommend-row {
+	display: flex;
+	justify-content: space-around;
+}
 </style>

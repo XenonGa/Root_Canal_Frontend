@@ -17,14 +17,16 @@
 				</el-table-column>
 				<el-table-column prop="mail" label="邮箱" width="300">
 				</el-table-column>
-				<el-table-column prop="isAdmin" label="身份" width="200"
+				<el-table-column prop="isAdmin" label="身份" width="200">
+				</el-table-column>
+				<!-- <el-table-column prop="isAdmin" label="身份" width="200"
 					:filters="[{ text: '普通医师', value: '普通医师' }, { text: '管理医师', value: '管理医师' }]"
 					:filter-method="filterTag" filter-placement="bottom-end">
 					<template slot-scope="scope">
 						<el-tag effect="plain" :type="scope.row.isAdmin === '管理医师' ? 'warning' : 'success'" disable-transitions>{{
 					scope.row.isAdmin }}</el-tag>
 					</template>
-				</el-table-column>
+				</el-table-column> -->
 				<el-table-column fixed="right" label="操作" width="300">
 					<template slot-scope="scope">
 						<el-button @click="setAsAdmin(scope.row)" size="small"
